@@ -28,15 +28,22 @@
 
 class Matlab2Python:
     def __init__(self, file_path):
-        # self.file_path = file_path
+        
         self.conversion(file_path)
     
 
     def conversion(self, file_path):
+        numpy_flag = False
+
         file = self.open_file(file_path)
 
-        file1 = self.subs(file, "%", "#")
-        file2 = self.subs(file1, "\n")
+        file_aux = self.subs(file, "%", "#")
+
+        file_aux = self.subs(file_aux, "\n")
+
+        numpy_flag, file_aux = self.change_array(file_aux)
+
+        file_aux = self.multiple_lines(file_aux)
 
         pass
         
@@ -51,6 +58,69 @@ class Matlab2Python:
             new_list.append(i.replace(char_prev, char_next))
         return new_list
     
+    def multiple_lines(self, line):
+        list = []
+        for i in line:
+            j = i.split(";")
+            if not j[-1]:
+                j=j[0:-1]
+            if len(j) != 1 and j:
+                list.extend(self.is_comment(j))
+            else:
+                list.append(i)
+        return list
+    
+    def is_comment(self, line):
+        out = ""
+        lis = []
+        flag = 0
+        flag2 = 0
+        if type(line) is list:
+            cont = 0
+            for l in line:
+                l = l.lstrip()
+                if l[0] == "#":
+                    flag = 1
+                    cont -= 1
+                    break
+                cont += 1
+
+            cont2 = 0
+            
+            if flag == 1:
+                for l in  line:
+                    if cont2 == cont:
+                        out += l
+                        flag2 = 1
+                    else:
+                        cont2 += 1
+                        lis.append(l)
+
+                if flag2 == 1:
+                    lis.append(out)
+            else:
+                lis = line
+            
+            
+        return lis
+
+    def change_array(self, list):
+        lis = []
+        numpy_flag = False
+        con = 0
+        flag = False
+        for line in list:
+            if line.find("[") != -1:
+                con += 1
+                flag = True
+            if line.find("]") != -1:
+                con -= 1
+            if con != 0 and flag:
+                print()
+
+        return numpy_flag, lis
+
+
 
 if __name__=="__main__":
     obj = Matlab2Python("../matlab examples/example1.m")

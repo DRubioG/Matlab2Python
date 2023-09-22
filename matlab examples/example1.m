@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-load("DCbasico.mat")
+load("DCbasico.mat")    %carga de datos
 
 media = 5;
 sigma = 1;
@@ -9,8 +9,8 @@ sigma = 1;
 
 %% a
 
-X1 = X(1:10);
-X2 = X(11:20);
+X1 = X(1:10); x= 0 % prueba
+X2 = X(11:20); x= 0; prueba=9;
 X3 = X(21:30);
 X4 = X(31:40);
 
@@ -30,7 +30,7 @@ X4_var = var(X4)
 
 %% c
 
-N = [100 200 1000 2500 5000 7000 8000 10000];
+N = [100 200 1000 2500; 5000 7000 8000 10000]
 
 for i = 1:length(N)
     
